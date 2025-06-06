@@ -4,6 +4,7 @@ using Bank.ExchangeService.Application;
 using Bank.ExchangeService.BackgroundServices;
 using Bank.ExchangeService.Database;
 using Bank.ExchangeService.Test.Services;
+using Bank.Http.Clients.User;
 using Bank.OpenApi;
 using Bank.Permissions;
 using Bank.Permissions.Services;
@@ -48,6 +49,7 @@ public class Hooks
         services.AddOpenApiExamples();
         services.AddAuthorizationServices();
         services.AddAuthenticationServices();
+        services.AddSingleton<IUserServiceHttpClient, TestUserServiceHttpClient>();
 
         var serviceProvider = services.BuildServiceProvider();
 

@@ -4,6 +4,8 @@ using Bank.Application.Queries;
 using Bank.Application.Responses;
 using Bank.ExchangeService.Services;
 using Bank.ExchangeService.Test.Examples.Entities;
+using Bank.ExchangeService.Test.Services;
+using Bank.Http.Clients.User;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +14,11 @@ using Shouldly;
 namespace Bank.ExchangeService.Test.Steps;
 
 [Binding]
-public class OptionSteps(ScenarioContext context, IOptionService optionService)
+public class OptionSteps(ScenarioContext context, IOptionService optionService,IUserServiceHttpClient userServiceHttpClient)
 {
-    private readonly ScenarioContext m_ScenarioContext = context;
-    private readonly IOptionService  m_OptionService   = optionService;
+    private readonly ScenarioContext           m_ScenarioContext = context;
+    private readonly IOptionService            m_OptionService   = optionService;
+    private readonly TestUserServiceHttpClient m_UserService     = (TestUserServiceHttpClient)userServiceHttpClient;
 
     [Given(@"a valid option filter query and pageable")]
     public void GivenAValidOptionFilterQueryAndPageable()
@@ -48,6 +51,21 @@ public class OptionSteps(ScenarioContext context, IOptionService optionService)
     {
         m_ScenarioContext[Constant.OptionId]             = Example.Entity.Option.Id;
         m_ScenarioContext[Constant.OptionIntervalFilter] = Example.Entity.Option.QuoteFilterIntervalQuery;
+        
+        var stockCurrencyId = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627");
+                       
+
+        m_UserService.ConfigureCurrencyById(stockCurrencyId, new CurrencySimpleResponse
+                                                             {
+                                                                 Name        = null,
+                                                                 Code        = null,
+                                                                 Symbol      = null,
+                                                                 Description = null,
+                                                                 Status      = false,
+                                                                 CreatedAt   = default,
+                                                                 ModifiedAt  = default,
+                                                                 Id          = stockCurrencyId
+                                                             });
     }
 
     [When(@"the option is fetched")]
@@ -75,6 +93,21 @@ public class OptionSteps(ScenarioContext context, IOptionService optionService)
     {
         m_ScenarioContext[Constant.OptionId]             = Example.Entity.Option.Id;
         m_ScenarioContext[Constant.OptionIntervalFilter] = Example.Entity.Option.QuoteFilterIntervalQuery;
+        
+        var stockCurrencyId = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627");
+                       
+
+        m_UserService.ConfigureCurrencyById(stockCurrencyId, new CurrencySimpleResponse
+                                                             {
+                                                                 Name        = null,
+                                                                 Code        = null,
+                                                                 Symbol      = null,
+                                                                 Description = null,
+                                                                 Status      = false,
+                                                                 CreatedAt   = default,
+                                                                 ModifiedAt  = default,
+                                                                 Id          = stockCurrencyId
+                                                             });
     }
 
     [When(@"the daily option data is fetched")]

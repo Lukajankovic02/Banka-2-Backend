@@ -4,6 +4,8 @@ using Bank.Application.Queries;
 using Bank.Application.Responses;
 using Bank.ExchangeService.Services;
 using Bank.ExchangeService.Test.Examples.Entities;
+using Bank.ExchangeService.Test.Services;
+using Bank.Http.Clients.User;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +14,11 @@ using Shouldly;
 namespace Bank.ExchangeService.Test.Steps;
 
 [Binding]
-public class StockSteps(ScenarioContext context, IStockService stockService)
+public class StockSteps(ScenarioContext context, IStockService stockService, IUserServiceHttpClient userServiceHttpClient)
 {
-    private readonly ScenarioContext m_ScenarioContext = context;
-    private readonly IStockService   m_StockService    = stockService;
+    private readonly ScenarioContext           m_ScenarioContext = context;
+    private readonly IStockService             m_StockService    = stockService;
+    private readonly TestUserServiceHttpClient m_UserService     = (TestUserServiceHttpClient)userServiceHttpClient;
 
     [Given(@"a valid stock filter query and pageable")]
     public void GivenAValidStockFilterQueryAndPageable()
@@ -48,6 +51,20 @@ public class StockSteps(ScenarioContext context, IStockService stockService)
     {
         m_ScenarioContext[Constant.StockId]             = Example.Entity.Stock.Id;
         m_ScenarioContext[Constant.StockIntervalFilter] = Example.Entity.Stock.QuoteFilterIntervalQuery;
+        
+        m_UserService.ConfigureCurrencyById(
+                                            Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627"),
+                                            new CurrencySimpleResponse
+                                            {
+                                                Id          = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627"),
+                                                Name        = "RSD",
+                                                Code        = "RSD",
+                                                Symbol      = null,
+                                                Description = null,
+                                                Status      = false,
+                                                CreatedAt   = default,
+                                                ModifiedAt  = default
+                                            });
     }
 
     [When(@"the stock is fetched")]
@@ -75,6 +92,20 @@ public class StockSteps(ScenarioContext context, IStockService stockService)
     {
         m_ScenarioContext[Constant.StockId]             = Example.Entity.Stock.Id;
         m_ScenarioContext[Constant.StockIntervalFilter] = Example.Entity.Stock.QuoteFilterIntervalQuery;
+        
+        m_UserService.ConfigureCurrencyById(
+                                            Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627"),
+                                            new CurrencySimpleResponse
+                                            {
+                                                Id          = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627"),
+                                                Name        = "RSD",
+                                                Code        = "RSD",
+                                                Symbol      = null,
+                                                Description = null,
+                                                Status      = false,
+                                                CreatedAt   = default,
+                                                ModifiedAt  = default
+                                            });
     }
 
     [When(@"the daily stock data is fetched")]

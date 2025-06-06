@@ -14,7 +14,6 @@ public static partial class Seeder
                                                         Id            = Guid.Parse("fde50c25-8515-4c83-a89b-fa6a6c01c254"),
                                                         ActuaryId     = Guid.Parse("b503387d-b9b5-41a2-9621-ee205c48a9cf"), //GUID USER
                                                         AccountId     = Guid.Parse("633419a2-21d5-420c-a951-a4a1b9b351c0"), //GUID USER
-                                                        SupervisorId  = Guid.Parse("f38ac169-0865-4baa-afb7-56e422b5cf82"),
                                                         SecurityId    = Stock.Apple.Id,
                                                         OrderType     = OrderType.Market,
                                                         Quantity      = 8,

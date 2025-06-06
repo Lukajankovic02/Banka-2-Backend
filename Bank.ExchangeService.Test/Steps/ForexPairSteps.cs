@@ -4,6 +4,8 @@ using Bank.Application.Queries;
 using Bank.Application.Responses;
 using Bank.ExchangeService.Services;
 using Bank.ExchangeService.Test.Examples.Entities;
+using Bank.ExchangeService.Test.Services;
+using Bank.Http.Clients.User;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +14,44 @@ using Shouldly;
 namespace Bank.ExchangeService.Test.Steps;
 
 [Binding]
-public class ForexPairSteps(ScenarioContext context, IForexPairService forexPairService)
+public class ForexPairSteps(ScenarioContext context, IForexPairService forexPairService,IUserServiceHttpClient userServiceHttpClient)
 {
-    private readonly ScenarioContext   m_ScenarioContext  = context;
-    private readonly IForexPairService m_ForexPairService = forexPairService;
+    private readonly ScenarioContext           m_ScenarioContext  = context;
+    private readonly IForexPairService         m_ForexPairService = forexPairService;
+    private readonly TestUserServiceHttpClient m_UserService      = (TestUserServiceHttpClient)userServiceHttpClient;
 
     [Given(@"a valid quote filter query and pageable")]
     public void GivenAValidQuoteFilterQueryAndPageable()
     {
         m_ScenarioContext[Constant.ForexPairFilterQuery] = Example.Entity.ForexPair.QuoteFilterQuery;
         m_ScenarioContext[Constant.ForexPairPageable]    = new Pageable();
+
+        var currency1 = new CurrencySimpleResponse
+                        {
+                            Id          = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627"),
+                            Name        = null,
+                            Code        = null,
+                            Symbol      = null,
+                            Description = null,
+                            Status      = false,
+                            CreatedAt   = default,
+                            ModifiedAt  = default
+                        };
+        
+        var currency2 = new CurrencySimpleResponse
+                        {
+                            Id          = Guid.Parse("6842a5fa-eee4-4438-bcff-5217b6ac6ace"),
+                            Name        = null,
+                            Code        = null,
+                            Symbol      = null,
+                            Description = null,
+                            Status      = false,
+                            CreatedAt   = default,
+                            ModifiedAt  = default
+                        };
+        
+        m_UserService.SimpleCurrencies = new List<CurrencySimpleResponse> { currency1, currency2 };
+
     }
 
     [When(@"all forex pairs are fetched")]
@@ -48,7 +78,50 @@ public class ForexPairSteps(ScenarioContext context, IForexPairService forexPair
     {
         m_ScenarioContext[Constant.ForexPairId]             = Example.Entity.ForexPair.Id;
         m_ScenarioContext[Constant.ForexPairIntervalFilter] = Example.Entity.ForexPair.QuoteFilterIntervalQuery;
+
+        var baseCurrencyId  = Guid.Parse("6842a5fa-eee4-4438-bcff-5217b6ac6ace");
+        var quoteCurrencyId = Guid.Parse("1a77ed84-d984-4410-85ec-ffde69508625");
+        var stockCurrencyId = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627");
+
+        m_UserService.ConfigureCurrencyById(baseCurrencyId, new CurrencySimpleResponse
+                                                            {
+                                                                Id          = baseCurrencyId,
+                                                                Code        = "USD",
+                                                                Name        = null,
+                                                                Symbol      = null,
+                                                                Description = null,
+                                                                Status      = false,
+                                                                CreatedAt   = default,
+                                                                ModifiedAt  = default
+                                                            });
+
+        m_UserService.ConfigureCurrencyById(quoteCurrencyId, new CurrencySimpleResponse
+                                                             {
+                                                                 Id          = quoteCurrencyId,
+                                                                 Code        = "EUR",
+                                                                 Name        = null,
+                                                                 Symbol      = null,
+                                                                 Description = null,
+                                                                 Status      = false,
+                                                                 CreatedAt   = default,
+                                                                 ModifiedAt  = default
+                                                             });
+
+        m_UserService.ConfigureCurrencyById(stockCurrencyId, new CurrencySimpleResponse
+                                                             {
+                                                                 Id          = stockCurrencyId,
+                                                                 Code        = "GBP",
+                                                                 Name        = null,
+                                                                 Symbol      = null,
+                                                                 Description = null,
+                                                                 Status      = false,
+                                                                 CreatedAt   = default,
+                                                                 ModifiedAt  = default
+                                                             });
     }
+
+    
+    
 
     [When(@"the forex pair is fetched")]
     public async Task WhenTheForexPairIsFetched()
@@ -75,6 +148,46 @@ public class ForexPairSteps(ScenarioContext context, IForexPairService forexPair
     {
         m_ScenarioContext[Constant.ForexPairId]             = Example.Entity.ForexPair.Id;
         m_ScenarioContext[Constant.ForexPairIntervalFilter] = Example.Entity.ForexPair.QuoteFilterIntervalQuery;
+        
+        var baseCurrencyId  = Guid.Parse("6842a5fa-eee4-4438-bcff-5217b6ac6ace");
+        var quoteCurrencyId = Guid.Parse("1a77ed84-d984-4410-85ec-ffde69508625");
+        var stockCurrencyId = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627");
+
+        m_UserService.ConfigureCurrencyById(baseCurrencyId, new CurrencySimpleResponse
+                                                            {
+                                                                Id          = baseCurrencyId,
+                                                                Code        = "USD",
+                                                                Name        = null,
+                                                                Symbol      = null,
+                                                                Description = null,
+                                                                Status      = false,
+                                                                CreatedAt   = default,
+                                                                ModifiedAt  = default
+                                                            });
+
+        m_UserService.ConfigureCurrencyById(quoteCurrencyId, new CurrencySimpleResponse
+                                                             {
+                                                                 Id          = quoteCurrencyId,
+                                                                 Code        = "EUR",
+                                                                 Name        = null,
+                                                                 Symbol      = null,
+                                                                 Description = null,
+                                                                 Status      = false,
+                                                                 CreatedAt   = default,
+                                                                 ModifiedAt  = default
+                                                             });
+
+        m_UserService.ConfigureCurrencyById(stockCurrencyId, new CurrencySimpleResponse
+                                                             {
+                                                                 Id          = stockCurrencyId,
+                                                                 Code        = "GBP",
+                                                                 Name        = null,
+                                                                 Symbol      = null,
+                                                                 Description = null,
+                                                                 Status      = false,
+                                                                 CreatedAt   = default,
+                                                                 ModifiedAt  = default
+                                                             });
     }
 
     [When(@"the daily forex pair data is fetched")]

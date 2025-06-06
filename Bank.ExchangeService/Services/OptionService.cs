@@ -51,15 +51,15 @@ public class OptionService(ISecurityRepository securityRepository, IRedisReposit
             var redisQuotes = (await m_RedisRepository.FindAllOptionQuotes(security.Ticker)).Select(redisQuote => redisQuote.ToQuote(security.Id))
                                                                                             .OrderByDescending(quote => quote.CreatedAt)
                                                                                             .ToList();
-
+        
             var lastRedisQuoteDate = redisQuotes.LastOrDefault() == null
                                      ? DateTime.UtcNow
                                      : redisQuotes.Last()
                                                   .CreatedAt;
-
+        
             var quotesBeforeRedisStarted = security.Quotes.SkipWhile(quote => quote.CreatedAt >= lastRedisQuoteDate)
                                                    .ToList();
-
+        
             redisQuotes.AddRange(quotesBeforeRedisStarted);
             security.Quotes = redisQuotes;
         }

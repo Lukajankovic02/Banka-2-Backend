@@ -4,6 +4,8 @@ using Bank.Application.Queries;
 using Bank.Application.Responses;
 using Bank.ExchangeService.Database.Seeders;
 using Bank.ExchangeService.Services;
+using Bank.ExchangeService.Test.Services;
+using Bank.Http.Clients.User;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +14,40 @@ using Shouldly;
 namespace Bank.ExchangeService.Test.Steps;
 
 [Binding]
-public class AssetSteps(ScenarioContext context, IAssetService assetService)
+public class AssetSteps(ScenarioContext context, IAssetService assetService, IUserServiceHttpClient userServiceHttpClient)
 {
-    private readonly ScenarioContext m_ScenarioContext = context;
-    private readonly IAssetService   m_AssetService    = assetService;
+    private readonly ScenarioContext           m_ScenarioContext = context;
+    private readonly IAssetService             m_AssetService    = assetService;
+    private readonly TestUserServiceHttpClient m_UserService     = (TestUserServiceHttpClient)userServiceHttpClient;
 
     [Given(@"a valid asset filter query and pageable")]
     public void GivenAValidAssetFilterQueryAndPageable()
     {
         m_ScenarioContext[Constant.AssetFilterQuery] = new AssetFilterQuery();
         m_ScenarioContext[Constant.AssetPageable]    = new Pageable();
+
+        var user = new UserResponse
+                   {
+                       Id                         = Guid.Parse("5817c260-e4a9-4dc1-87d9-2fa12af157d9"),
+                       FirstName                  = null,
+                       LastName                   = null,
+                       DateOfBirth                = default,
+                       Gender                     = Gender.Invalid,
+                       UniqueIdentificationNumber = null,
+                       Username                   = null,
+                       Email                      = null,
+                       PhoneNumber                = null,
+                       Address                    = null,
+                       Role                       = Role.Invalid,
+                       Permissions                = 0,
+                       Department                 = null,
+                       Accounts                   = null,
+                       CreatedAt                  = default,
+                       ModifiedAt                 = default,
+                       Activated                  = false
+                   };
+        
+        m_UserService.UsersPage = new Page<UserResponse>(new List<UserResponse>() { user }, 1, 1, 1);
     }
 
     [When(@"all assets are fetched")]
@@ -48,6 +74,30 @@ public class AssetSteps(ScenarioContext context, IAssetService assetService)
     public void GivenAValidAssetId()
     {
         m_ScenarioContext[Constant.AssetId] = Seeder.Asset.Asset1.Id;
+
+        var user = new UserResponse
+                   {
+                       Id                         = Guid.Parse("5817c260-e4a9-4dc1-87d9-2fa12af157d9"),
+                       FirstName                  = null,
+                       LastName                   = null,
+                       DateOfBirth                = default,
+                       Gender                     = Gender.Invalid,
+                       UniqueIdentificationNumber = null,
+                       Username                   = null,
+                       Email                      = null,
+                       PhoneNumber                = null,
+                       Address                    = null,
+                       Role                       = Role.Invalid,
+                       Permissions                = 0,
+                       Department                 = null,
+                       Accounts                   = null,
+                       CreatedAt                  = default,
+                       ModifiedAt                 = default,
+                       Activated                  = false
+                   };
+        
+        m_UserService.OneUser = user;
+
     }
 
     [When(@"the asset is fetched")]

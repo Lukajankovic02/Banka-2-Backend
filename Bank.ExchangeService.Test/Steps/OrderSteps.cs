@@ -5,6 +5,8 @@ using Bank.Application.Requests;
 using Bank.Application.Responses;
 using Bank.ExchangeService.Services;
 using Bank.ExchangeService.Test.Examples.Entities;
+using Bank.ExchangeService.Test.Services;
+using Bank.Http.Clients.User;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,16 +15,106 @@ using Shouldly;
 namespace Bank.ExchangeService.Test.Steps;
 
 [Binding]
-public class OrderSteps(ScenarioContext context, IOrderService orderService)
+public class OrderSteps(ScenarioContext context, IOrderService orderService, IUserServiceHttpClient userServiceHttpClient)
 {
-    private readonly ScenarioContext m_ScenarioContext = context;
-    private readonly IOrderService   m_OrderService    = orderService;
+    private readonly ScenarioContext           m_ScenarioContext = context;
+    private readonly IOrderService             m_OrderService    = orderService;
+    private readonly TestUserServiceHttpClient m_UserService     = (TestUserServiceHttpClient)userServiceHttpClient;
 
     [Given(@"a valid order filter query and pageable")]
     public void GivenAValidOrderFilterQueryAndPageable()
     {
         m_ScenarioContext[Constant.OrderFilterQuery] = Example.Entity.Order.FilterQuery;
         m_ScenarioContext[Constant.OrderPageable]    = new Pageable();
+
+        var user1 = new UserResponse
+                    {
+                        Id                         = Guid.Parse("b503387d-b9b5-41a2-9621-ee205c48a9cf"),
+                        FirstName                  = null,
+                        LastName                   = null,
+                        DateOfBirth                = default,
+                        Gender                     = Gender.Invalid,
+                        UniqueIdentificationNumber = null,
+                        Username                   = null,
+                        Email                      = null,
+                        PhoneNumber                = null,
+                        Address                    = null,
+                        Role                       = Role.Invalid,
+                        Permissions                = 0,
+                        Department                 = null,
+                        Accounts                   = null,
+                        CreatedAt                  = default,
+                        ModifiedAt                 = default,
+                        Activated                  = false
+                    };
+
+        var user2 = new UserResponse
+                    {
+                        Id                         = Guid.Parse("f38ac169-0865-4baa-afb7-56e422b5cf82"),
+                        FirstName                  = null,
+                        LastName                   = null,
+                        DateOfBirth                = default,
+                        Gender                     = Gender.Invalid,
+                        UniqueIdentificationNumber = null,
+                        Username                   = null,
+                        Email                      = null,
+                        PhoneNumber                = null,
+                        Address                    = null,
+                        Role                       = Role.Invalid,
+                        Permissions                = 0,
+                        Department                 = null,
+                        Accounts                   = null,
+                        CreatedAt                  = default,
+                        ModifiedAt                 = default,
+                        Activated                  = false
+                    };
+
+        var account1 = new AccountResponse
+                       {
+                           Id                = Guid.Parse("633419a2-21d5-420c-a951-a4a1b9b351c0"),
+                           AccountNumber     = "123456789",
+                           Balance           = 10000,
+                           Currency          = null,
+                           CreatedAt         = DateTime.UtcNow,
+                           ModifiedAt        = DateTime.UtcNow,
+                           Office            = null,
+                           Name              = null,
+                           Client            = null,
+                           AvailableBalance  = 0,
+                           Employee          = null,
+                           Type              = null,
+                           AccountCurrencies = null,
+                           DailyLimit        = 0,
+                           MonthlyLimit      = 0,
+                           CreationDate      = default,
+                           ExpirationDate    = default,
+                           Status            = false
+                       };
+
+        var account2 = new AccountResponse
+                       {
+                           Id                = Guid.Parse("e4df2e9b-a57f-460e-a79e-c6b1e47ef4ab"),
+                           AccountNumber     = "987654321",
+                           Balance           = 20000,
+                           Currency          = null,
+                           CreatedAt         = DateTime.UtcNow,
+                           ModifiedAt        = DateTime.UtcNow,
+                           Office            = null,
+                           Name              = null,
+                           Client            = null,
+                           AvailableBalance  = 0,
+                           Employee          = null,
+                           Type              = null,
+                           AccountCurrencies = null,
+                           DailyLimit        = 0,
+                           MonthlyLimit      = 0,
+                           CreationDate      = default,
+                           ExpirationDate    = default,
+                           Status            = false
+                       };
+
+        m_UserService.UsersPage    = new Page<UserResponse>(new List<UserResponse>() { user1, user2 }, 1, 1, 2);
+        m_UserService.AccountsPage = new Page<AccountResponse>(new List<AccountResponse>() { account1, account2 }, 1, 1, 2);
     }
 
     [When(@"all orders are fetched")]
@@ -48,6 +140,77 @@ public class OrderSteps(ScenarioContext context, IOrderService orderService)
     public void GivenAValidOrderId()
     {
         m_ScenarioContext[Constant.OrderId] = Example.Entity.Order.Id;
+
+        m_ScenarioContext[Constant.OrderFilterQuery] = Example.Entity.Order.FilterQuery;
+        m_ScenarioContext[Constant.OrderPageable]    = new Pageable();
+
+        var user1 = new UserResponse
+                    {
+                        Id                         = Guid.Parse("b503387d-b9b5-41a2-9621-ee205c48a9cf"),
+                        FirstName                  = null,
+                        LastName                   = null,
+                        DateOfBirth                = default,
+                        Gender                     = Gender.Invalid,
+                        UniqueIdentificationNumber = null,
+                        Username                   = null,
+                        Email                      = null,
+                        PhoneNumber                = null,
+                        Address                    = null,
+                        Role                       = Role.Invalid,
+                        Permissions                = 0,
+                        Department                 = null,
+                        Accounts                   = null,
+                        CreatedAt                  = default,
+                        ModifiedAt                 = default,
+                        Activated                  = false
+                    };
+
+        var user2 = new UserResponse
+                    {
+                        Id                         = Guid.Parse("f38ac169-0865-4baa-afb7-56e422b5cf82"),
+                        FirstName                  = null,
+                        LastName                   = null,
+                        DateOfBirth                = default,
+                        Gender                     = Gender.Invalid,
+                        UniqueIdentificationNumber = null,
+                        Username                   = null,
+                        Email                      = null,
+                        PhoneNumber                = null,
+                        Address                    = null,
+                        Role                       = Role.Invalid,
+                        Permissions                = 0,
+                        Department                 = null,
+                        Accounts                   = null,
+                        CreatedAt                  = default,
+                        ModifiedAt                 = default,
+                        Activated                  = false
+                    };
+
+        var accountId = Guid.Parse("633419a2-21d5-420c-a951-a4a1b9b351c0");
+
+        m_UserService.UsersPage = new Page<UserResponse>(new List<UserResponse>() { user1, user2 }, 1, 1, 2);
+
+        m_UserService.ConfigureAccountById(accountId, new AccountResponse
+                                                      {
+                                                          AccountNumber     = "123456789",
+                                                          Balance           = 10000,
+                                                          Currency          = null,
+                                                          CreatedAt         = DateTime.UtcNow,
+                                                          ModifiedAt        = DateTime.UtcNow,
+                                                          Office            = null,
+                                                          Name              = null,
+                                                          Client            = null,
+                                                          AvailableBalance  = 0,
+                                                          Employee          = null,
+                                                          Type              = null,
+                                                          AccountCurrencies = null,
+                                                          DailyLimit        = 0,
+                                                          MonthlyLimit      = 0,
+                                                          CreationDate      = default,
+                                                          ExpirationDate    = default,
+                                                          Status            = false,
+                                                          Id                = accountId
+                                                      });
     }
 
     [When(@"the order is fetched")]
@@ -73,6 +236,53 @@ public class OrderSteps(ScenarioContext context, IOrderService orderService)
     public void GivenAValidOrderCreateRequest()
     {
         m_ScenarioContext[Constant.OrderCreateRequest] = Example.Entity.Order.CreateRequest;
+
+        var user1 = new UserResponse
+                    {
+                        Id                         = Guid.Parse("5817c260-e4a9-4dc1-87d9-2fa12af157d9"),
+                        FirstName                  = null,
+                        LastName                   = null,
+                        DateOfBirth                = default,
+                        Gender                     = Gender.Invalid,
+                        UniqueIdentificationNumber = null,
+                        Username                   = null,
+                        Email                      = null,
+                        PhoneNumber                = null,
+                        Address                    = null,
+                        Role                       = Role.Invalid,
+                        Permissions                = 0,
+                        Department                 = null,
+                        Accounts                   = null,
+                        CreatedAt                  = default,
+                        ModifiedAt                 = default,
+                        Activated                  = false
+                    };
+        
+
+        var account1 = new AccountResponse
+                       {
+                           Id                = Guid.Parse("fdbc0d89-c9ee-4c6a-bf67-056039bc4c5b"),
+                           AccountNumber     = "222000000000000531",
+                           Balance           = 10000,
+                           Currency          = null,
+                           CreatedAt         = DateTime.UtcNow,
+                           ModifiedAt        = DateTime.UtcNow,
+                           Office            = null,
+                           Name              = null,
+                           Client            = null,
+                           AvailableBalance  = 0,
+                           Employee          = null,
+                           Type              = null,
+                           AccountCurrencies = null,
+                           DailyLimit        = 0,
+                           MonthlyLimit      = 0,
+                           CreationDate      = default,
+                           ExpirationDate    = default,
+                           Status            = false
+                       };
+
+        m_UserService.UsersPage    = new Page<UserResponse>(new List<UserResponse>() { user1}, 1, 1, 1);
+        m_UserService.AccountsPage = new Page<AccountResponse>(new List<AccountResponse>() { account1}, 1, 1,1);
     }
 
     [When(@"the order is created")]
@@ -107,6 +317,53 @@ public class OrderSteps(ScenarioContext context, IOrderService orderService)
     {
         m_ScenarioContext[Constant.OrderUpdateRequest] = Example.Entity.Order.UpdateRequest;
         m_ScenarioContext[Constant.OrderId]            = Example.Entity.Order.Id;
+        
+        var user1 = new UserResponse
+                    {
+                        Id                         = Guid.Parse("b503387d-b9b5-41a2-9621-ee205c48a9cf"),
+                        FirstName                  = null,
+                        LastName                   = null,
+                        DateOfBirth                = default,
+                        Gender                     = Gender.Invalid,
+                        UniqueIdentificationNumber = null,
+                        Username                   = null,
+                        Email                      = null,
+                        PhoneNumber                = null,
+                        Address                    = null,
+                        Role                       = Role.Invalid,
+                        Permissions                = 0,
+                        Department                 = null,
+                        Accounts                   = null,
+                        CreatedAt                  = default,
+                        ModifiedAt                 = default,
+                        Activated                  = false
+                    };
+        
+        var accountId = Guid.Parse("633419a2-21d5-420c-a951-a4a1b9b351c0");
+
+        m_UserService.ConfigureAccountById(accountId, new AccountResponse
+                                                      {
+                                                          AccountNumber     = "123456789",
+                                                          Balance           = 10000,
+                                                          Currency          = null,
+                                                          CreatedAt         = DateTime.UtcNow,
+                                                          ModifiedAt        = DateTime.UtcNow,
+                                                          Office            = null,
+                                                          Name              = null,
+                                                          Client            = null,
+                                                          AvailableBalance  = 0,
+                                                          Employee          = null,
+                                                          Type              = null,
+                                                          AccountCurrencies = null,
+                                                          DailyLimit        = 0,
+                                                          MonthlyLimit      = 0,
+                                                          CreationDate      = default,
+                                                          ExpirationDate    = default,
+                                                          Status            = false,
+                                                          Id                = accountId
+                                                      });
+        
+        m_UserService.UsersPage    = new Page<UserResponse>(new List<UserResponse>() { user1}, 1, 1, 1);
     }
 
     [When(@"the order is updated")]
@@ -117,6 +374,8 @@ public class OrderSteps(ScenarioContext context, IOrderService orderService)
 
         var result = await m_OrderService.Update(request, id);
         m_ScenarioContext[Constant.OrderUpdateResult] = result;
+        
+        
     }
 
     [Then(@"the updated order details should be returned")]

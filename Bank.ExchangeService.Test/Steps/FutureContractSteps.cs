@@ -4,6 +4,8 @@ using Bank.Application.Queries;
 using Bank.Application.Responses;
 using Bank.ExchangeService.Services;
 using Bank.ExchangeService.Test.Examples.Entities;
+using Bank.ExchangeService.Test.Services;
+using Bank.Http.Clients.User;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +14,11 @@ using Shouldly;
 namespace Bank.ExchangeService.Test.Steps;
 
 [Binding]
-public class FutureContractSteps(ScenarioContext context, IFutureContractService futureContractService)
+public class FutureContractSteps(ScenarioContext context, IFutureContractService futureContractService,IUserServiceHttpClient userServiceHttpClient)
 {
-    private readonly ScenarioContext        m_ScenarioContext       = context;
-    private readonly IFutureContractService m_FutureContractService = futureContractService;
+    private readonly ScenarioContext           m_ScenarioContext       = context;
+    private readonly IFutureContractService    m_FutureContractService = futureContractService;
+    private readonly TestUserServiceHttpClient m_UserService           = (TestUserServiceHttpClient)userServiceHttpClient;
 
     [Given(@"a valid future contract filter query and pageable")]
     public void GivenAValidFutureContractFilterQueryAndPageable()
@@ -48,6 +51,22 @@ public class FutureContractSteps(ScenarioContext context, IFutureContractService
     {
         m_ScenarioContext[Constant.FutureContractId]             = Example.Entity.FutureContract.Id;
         m_ScenarioContext[Constant.FutureContractIntervalFilter] = Example.Entity.FutureContract.QuoteFilterIntervalQuery;
+
+        var stockCurrencyId = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627");
+                       
+
+        m_UserService.ConfigureCurrencyById(stockCurrencyId, new CurrencySimpleResponse
+                                                             {
+                                                                 Name        = null,
+                                                                 Code        = null,
+                                                                 Symbol      = null,
+                                                                 Description = null,
+                                                                 Status      = false,
+                                                                 CreatedAt   = default,
+                                                                 ModifiedAt  = default,
+                                                                 Id          = stockCurrencyId
+                                                             });
+
     }
 
     [When(@"the future contract is fetched")]
@@ -75,6 +94,21 @@ public class FutureContractSteps(ScenarioContext context, IFutureContractService
     {
         m_ScenarioContext[Constant.FutureContractId]             = Example.Entity.FutureContract.Id;
         m_ScenarioContext[Constant.FutureContractIntervalFilter] = Example.Entity.FutureContract.QuoteFilterIntervalQuery;
+        
+        var stockCurrencyId = Guid.Parse("81bf331a-0a35-4716-ad12-d1d1bcf66627");
+                       
+
+        m_UserService.ConfigureCurrencyById(stockCurrencyId, new CurrencySimpleResponse
+                                                             {
+                                                                 Name        = null,
+                                                                 Code        = null,
+                                                                 Symbol      = null,
+                                                                 Description = null,
+                                                                 Status      = false,
+                                                                 CreatedAt   = default,
+                                                                 ModifiedAt  = default,
+                                                                 Id          = stockCurrencyId
+                                                             });
     }
 
     [When(@"the daily future contract data is fetched")]
